@@ -129,20 +129,25 @@ export function BridgeStructure() {
             {/* Multi-Segmented Deck Heatmap Slices */}
             {segments.map((segVal, sIdx) => {
               const segCenterZ = (span.zRange[0] + (sIdx + 0.5) * segmentLength);
-              let tileColor = '#334155'; // default asphalt/steel
+              let tileColor = '#1e293b'; // Realistic uniform asphalt
 
               if (viewMode === 'STRESS') {
                 tileColor = getHeatmapColor(segVal);
-              } else if (viewMode === 'LIVE') {
-                if (health.status === 'critical' || segVal >= 80) tileColor = getHeatmapColor(segVal);
-                else if (health.status === 'elevated' || segVal >= 62) tileColor = '#f97316';
-                else if (health.status === 'warning' || segVal >= 45) tileColor = '#f59e0b';
-                else tileColor = '#243242';
               } else if (viewMode === 'VIBRATION' || viewMode === 'DISPLACEMENT') {
                 tileColor = '#0284c7';
+              } else if (collapseSimulation.active && isSpan3) {
+                tileColor = '#7f1d1d';
+              } else {
+                tileColor = '#1e293b';
               }
 
-              const isCritSegment = segVal > 75;
+              const emissiveColor = isSelected
+                ? '#06b6d4'
+                : (viewMode === 'STRESS' ? tileColor : (collapseSimulation.active && isSpan3 ? '#ef4444' : '#000000'));
+              
+              const emissiveInt = isSelected
+                ? 0.5
+                : (viewMode === 'STRESS' ? 0.35 : (collapseSimulation.active && isSpan3 ? 0.8 : 0));
 
               return (
                 <mesh
@@ -151,15 +156,15 @@ export function BridgeStructure() {
                   castShadow
                   receiveShadow
                 >
-                  <boxGeometry args={[BRIDGE_DIMENSIONS.deckWidth, BRIDGE_DIMENSIONS.deckThickness, segmentLength - 0.15]} />
+                  <boxGeometry args={[BRIDGE_DIMENSIONS.deckWidth, BRIDGE_DIMENSIONS.deckThickness, segmentLength - 0.05]} />
                   <meshStandardMaterial
                     color={tileColor}
-                    roughness={0.4}
-                    metalness={0.6}
+                    roughness={0.45}
+                    metalness={0.5}
                     opacity={isZoneDimmed ? 0.35 : 1.0}
                     transparent={!!isZoneDimmed}
-                    emissive={isCritSegment ? '#ef4444' : isSelected ? '#06b6d4' : (viewMode === 'STRESS' ? tileColor : '#000000')}
-                    emissiveIntensity={isCritSegment ? 0.9 : isSelected ? 0.6 : (viewMode === 'STRESS' ? 0.4 : 0)}
+                    emissive={emissiveColor}
+                    emissiveIntensity={emissiveInt}
                   />
                 </mesh>
               );
