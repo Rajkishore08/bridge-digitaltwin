@@ -10,6 +10,7 @@ import { TrafficSystem } from './TrafficSystem';
 import { VibrationVisualizer } from './VibrationVisualizer';
 import { DataPacketPulses } from './DataPacketPulses';
 import { CollapseEffects } from './CollapseEffects';
+import { StructuralCracks } from './StructuralCracks';
 
 // Camera Presets dictionary
 const CAMERA_PRESETS = {
@@ -340,6 +341,7 @@ export function BridgeScene() {
         {/* 3D Scene Systems */}
         <BridgeEnvironment />
         <BridgeStructure />
+        <StructuralCracks />
         <TrafficSystem />
         <SensorMarkers />
         <VibrationVisualizer />
